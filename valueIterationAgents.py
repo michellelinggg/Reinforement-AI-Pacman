@@ -46,14 +46,17 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-        for k in range(self.iterations): # iterate this many times
-            for state in self.mdp.getStates():
-               	# we have to keep track omax of this loop
-                for action in self.mdp.getPossibleActions(state): 
-                	self.values[action] = self.computeQValueFromValues(state, action) # compute the qvalue
+        for iteration in range(self.iterations):
+          lastValues = self.values.copy()
+          for state in self.mdp.getStates():
+            intermediate = util.Counter()
+            if self.mdp.isTerminal(state):
+              pass
+            for action in self.mdp.getPossibleActions(state):
+              for nextState, prob in self.mdp.getTransitionStatesAndProbs(state, action):
+                intermediate[action] += prob * (self.mdp.getReward(state, action, nextState) + (self.discount* lastValues[nextState]))
+            self.values[state] = intermediate[intermediate.argMax()] 
 
-
- 
 
     def getValue(self, state):
         """
@@ -73,7 +76,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         transitionStatesAndProbs = self.mdp.getTransitionStatesAndProbs(state, action)
         for nextState, prob in transitionStatesAndProbs: # (nextState, probability of this state occur  g)
           reward = self.mdp.getReward(state, action, nextState)
-          qvalue += prob * (reward + self.discount * self.values[self.values.argMax()])
+          qvalue += prob * (reward + (self.discount * self.getValue(nextState)))
         return qvalue
 
 
@@ -89,7 +92,6 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         "*** YOUR CODE HERE ***"
         #util.raiseNotDefined()
-        #value = 
         if self.mdp.isTerminal(state): # if we have reached the end
             return None
         maxSoFar = float("-inf")# the maximum action so far
@@ -100,11 +102,12 @@ class ValueIterationAgent(ValueEstimationAgent):
             transitionStatesAndProbs = self.mdp.getTransitionStatesAndProbs(state, action)
             for nextState, prob in transitionStatesAndProbs:
                 reward = self.mdp.getReward(state, action, nextState)
-                qvalue += prob * (reward + self.discount * self.values[self.values.argMax()])
+                qvalue += prob * (reward + (self.discount * self.getValue(nextState)))
             if qvalue >= maxSoFar:
                 maxSoFar = qvalue
                 maxAction = action
         return maxAction
+       
 
 
 
