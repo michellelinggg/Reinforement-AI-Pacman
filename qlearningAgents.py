@@ -75,8 +75,6 @@ class QLearningAgent(ReinforcementAgent):
               maxValue = currentvalue
           return maxValue
 
-
-
     def computeActionFromQValues(self, state):
         """
           Compute the best action to take in a state.  Note that if there
@@ -95,7 +93,7 @@ class QLearningAgent(ReinforcementAgent):
             if currentvalue > maxValue:
               maxValue = currentvalue
               maxAction = action
-          return action
+          return maxAction
 
     def getAction(self, state):
         """
@@ -134,7 +132,6 @@ class QLearningAgent(ReinforcementAgent):
 
     def getValue(self, state):
         return self.computeValueFromQValues(state)
-
 
 class PacmanQAgent(QLearningAgent):
     "Exactly the same as QLearningAgent, but with different default parameters"
